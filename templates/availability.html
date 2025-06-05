@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Check Availability - APC Gymnasium Scheduler{% endblock %}
+
+{% block content %}
+<h1 style="text-align: center; color: var(--apc-dark-blue); margin-bottom: 2rem;">
+    Court Availability
+</h1>
+
+<div class="card">
+    <form method="GET" style="margin-bottom: 2rem;">
+        <div class="form-group">
+            <label for="date">Select Date:</label>
+            <input type="date" id="date" name="date" value="{{ selected_date }}" 
+                   onchange="this.form.submit()">
+        </div>
+    </form>
+    
+    <h3 style="color: var(--apc-dark-blue);">Schedule for {{ selected_date }}</h3>
+    
+    {% if schedules %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Time</th>
+                <th>Activity</th>
+                <th>Period</th>
+                {% if session.user_type == 'admin' %}
+                <th>Actions</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in schedules %}
+            <tr>
+                <td>{{ schedule[1] }}</td>
+                <td>{{ schedule[3] }} - {{ schedule[4] }}</td>
+                <td>{{ schedule[5] }}</td>
+                <td>{{ schedule[6] }}</td>
+                {% if session.user_type == 'admin' %}
+                <td>
+                    <a href="{{ url_for('remove_schedule', schedule_id=schedule[0]) }}" 
+                       class="btn btn-danger" 
+                       onclick="return confirm('Are you sure you want to remove this schedule?')">
+                        Remove
+                    </a>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; color: var(--apc-dark-blue); font-style: italic;">
+        No schedules found for this date.
+    </p>
+    {% endif %}
+    
+    {% if blocked_times %}
+    <h3 style="color: var(--apc-dark-blue); margin-top: 2rem;">Blocked Time Slots</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for blocked in blocked_times %}
+            <tr style="background-color: #ffebee;">
+                <td>{{ blocked[2] }} - {{ blocked[3] }}</td>
+                <td>{{ blocked[4] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+<div style="text-align: center; margin-top: 2rem;">
+    <a href="{{ url_for('add_schedule') }}" class="btn">Book a Time Slot</a>
+</div>
+{% endblock %}

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}APC Gymnasium Scheduler{% endblock %}</title>
+    <style>
+        :root {
+            --apc-gold: #FFD700;
+            --apc-dark-blue: #003366;
+            --apc-white: #FFFFFF;
+            --apc-light-gold: #FFF8DC;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--apc-light-gold) 0%, var(--apc-white) 100%);
+            min-height: 100vh;
+            color: var(--apc-dark-blue);
+        }
+
+        .header {
+            background: var(--apc-dark-blue);
+            color: var(--apc-white);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--apc-gold);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--apc-white);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--apc-gold);
+            color: var(--apc-dark-blue);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: var(--apc-white);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--apc-gold);
+        }
+
+        .btn {
+            background: var(--apc-gold);
+            color: var(--apc-dark-blue);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--apc-dark-blue);
+            color: var(--apc-white);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--apc-dark-blue);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--apc-gold);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background: var(--apc-dark-blue);
+            color: var(--apc-white);
+        }
+
+        .table tr:hover {
+            background: var(--apc-light-gold);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .dashboard-card {
+            background: var(--apc-white);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--apc-gold);
+            transition: transform 0.3s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .dashboard-card h3 {
+            color: var(--apc-dark-blue);
+            margin-bottom: 1rem;
+        }
+
+        .announcement {
+            background: var(--apc-gold);
+            color: var(--apc-dark-blue);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">APC Gymnasium Scheduler</div>
+            {% if session.user_id %}
+            <nav class="nav-links">
+                <a href="{{ url_for('check_availability') }}">Check Availability</a>
+                <a href="{{ url_for('add_schedule') }}">Add Schedule</a>
+                {% if session.user_type == 'admin' %}
+                <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+                {% else %}
+                <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}">Logout ({{ session.name }})</a>
+            </nav>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Add Schedule - APC Gymnasium Scheduler{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 2rem auto;">
+    <h2 style="text-align: center; color: var(--apc-dark-blue); margin-bottom: 2rem;">
+        Book Gymnasium Schedule
+    </h2>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="student_name">Student Name:</label>
+            <input type="text" id="student_name" name="student_name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required min="{{ moment().format('YYYY-MM-DD') }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="start_time">Start Time:</label>
+            <input type="time" id="start_time" name="start_time" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="end_time">End Time:</label>
+            <input type="time" id="end_time" name="end_time" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="period">Period:</label>
+            <select id="period" name="period" required>
+                <option value="">Select Period</option>
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="activity">Activity:</label>
+            <select id="activity" name="activity" required>
+                <option value="">Select Activity</option>
+                <option value="Basketball">Basketball</option>
+                <option value="Volleyball">Volleyball</option>
+                <option value="Badminton">Badminton</option>
+                <option value="Table Tennis">Table Tennis</option>
+                <option value="General Sports">General Sports</option>
+                <option value="Physical Education">Physical Education</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn" style="width: 100%;">Book Schedule</button>
+    </form>
+    
+    <div style="margin-top: 2rem; padding: 1rem; background: var(--apc-light-gold); border-radius: 5px;">
+        <h4 style="color: var(--apc-dark-blue);">Important Notes:</h4>
+        <ul>
+            <li>Court is available from 7:30 AM to 5:30 PM only</li>
+            <li>Maximum booking duration is 2 hours</li>
+            <li>Please check availability before booking</li>
+            <li>Bookings must be made at least 1 day in advance</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
