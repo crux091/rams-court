@@ -11,7 +11,7 @@ app.secret_key = 'your-secret-key-here'
 DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'your_password',
+    'password': '123456',
     'database': 'gymnasium_scheduler'
 }
 
@@ -203,11 +203,14 @@ def check_availability():
                          blocked_times=blocked_times,
                          selected_date=selected_date)
 
+from datetime import datetime
+from flask import flash, redirect, render_template, request, session, url_for
+
 @app.route('/add_schedule', methods=['GET', 'POST'])
 def add_schedule():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
+
     if request.method == 'POST':
         student_name = request.form['student_name']
         date = request.form['date']
@@ -215,24 +218,32 @@ def add_schedule():
         end_time = request.form['end_time']
         activity = request.form['activity']
         period = request.form['period']
-        
+
         # Validate time range (7:30 AM to 5:30 PM)
-        start_hour = int(start_time[:2])
-        end_hour = int(end_time[:2])
-        
-        if period == 'AM':
-            if start_hour < 7 or (start_hour == 7 and int(start_time[3:5]) < 30):
-                flash('Court is only available from 7:30 AM')
-                return render_template('add_schedule.html')
-        elif period == 'PM':
-            if end_hour > 17 or (end_hour == 17 and int(end_time[3:5]) > 30):
-                flash('Court is only available until 5:30 PM')
-                return render_template('add_schedule.html')
-        
+        try:
+            start_dt = datetime.strptime(start_time, "%H:%M")
+            end_dt = datetime.strptime(end_time, "%H:%M")
+
+            if start_dt >= end_dt:
+                flash("Start time must be before end time")
+                return render_template('add_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
+
+            # Court hours
+            earliest = datetime.strptime("07:30", "%H:%M")
+            latest = datetime.strptime("17:30", "%H:%M")
+
+            if start_dt < earliest or end_dt > latest:
+                flash("Court is only available from 7:30 AM to 5:30 PM")
+                return render_template('add_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
+
+        except ValueError:
+            flash("Invalid time format")
+            return render_template('add_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
+
         # Check for conflicts
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         cursor.execute('''
             SELECT * FROM schedules 
             WHERE date = %s AND (
@@ -241,27 +252,29 @@ def add_schedule():
                 (start_time >= %s AND end_time <= %s)
             )
         ''', (date, start_time, start_time, end_time, end_time, start_time, end_time))
-        
+
         if cursor.fetchone():
             flash('Time slot is already booked')
             cursor.close()
             conn.close()
-            return render_template('add_schedule.html')
-        
+            return render_template('add_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
+
         # Add schedule
         cursor.execute('''
             INSERT INTO schedules (student_name, date, start_time, end_time, activity, period, created_by)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
         ''', (student_name, date, start_time, end_time, activity, period, session['email']))
-        
+
         conn.commit()
         cursor.close()
         conn.close()
-        
+
         flash('Schedule added successfully!')
         return redirect(url_for('check_availability'))
-    
-    return render_template('add_schedule.html')
+
+    # For GET request, send today's date to set min date in input
+    return render_template('add_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
+
 
 @app.route('/remove_schedule/<int:schedule_id>')
 def remove_schedule(schedule_id):
