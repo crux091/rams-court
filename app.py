@@ -8,6 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
 
 #Try commit
+#Try commit
 # Database configuration
 DB_CONFIG = {
     'host': 'localhost',
