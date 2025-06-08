@@ -217,7 +217,7 @@ def add_schedule():
         start_time = request.form['start_time']
         end_time = request.form['end_time']
         activity = request.form['activity']
-        period = request.form['period']
+        # period = request.form['period']
 
         # Validate time range (7:30 AM to 5:30 PM)
         try:
