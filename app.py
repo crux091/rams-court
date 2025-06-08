@@ -43,7 +43,7 @@ def init_database():
             start_time TIME NOT NULL,
             end_time TIME NOT NULL,
             activity VARCHAR(255) NOT NULL,
-            period ENUM('AM', 'PM') NOT NULL,
+            # period ENUM('AM', 'PM') NOT NULL,
             created_by VARCHAR(255) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -258,12 +258,11 @@ def add_schedule():
             cursor.close()
             conn.close()
             return render_template('add_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
-
-        # Add schedule
         cursor.execute('''
-            INSERT INTO schedules (student_name, date, start_time, end_time, activity, period, created_by)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        ''', (student_name, date, start_time, end_time, activity, period, session['email']))
+            INSERT INTO schedules (student_name, date, start_time, end_time, activity, created_by)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        ''', (student_name, date, start_time, end_time, activity, session['email']))
+
 
         conn.commit()
         cursor.close()
