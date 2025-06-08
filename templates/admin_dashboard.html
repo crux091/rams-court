@@ -11,29 +11,29 @@
     <div class="dashboard-card">
         <h3>Check Availability</h3>
         <p>View and manage the current schedule and available time slots.</p>
-        <a href="{{ url_for('check_availability') }}" class="btn">Manage Schedule</a>
+        <a href="{{ url_for('check_availability') }}" class="btn" style="margin-top: 1rem;">Manage Schedule</a>
     </div>
     
     <div class="dashboard-card">
         <h3>Add Schedule</h3>
         <p>Add new bookings to the gymnasium schedule.</p>
-        <a href="{{ url_for('add_schedule') }}" class="btn">Add Booking</a>
+        <a href="{{ url_for('add_schedule') }}" class="btn" style="margin-top: 1rem;">Add Booking</a>
     </div>
     
     <div class="dashboard-card">
         <h3>Block Time Slots</h3>
         <p>Block specific time slots for classes or maintenance.</p>
-        <a href="{{ url_for('block_time') }}" class="btn">Block Times</a>
+        <a href="{{ url_for('block_time') }}" class="btn" style="margin-top: 1rem;">Block Times</a>
     </div>
     
     <div class="dashboard-card">
         <h3>Manage Announcements</h3>
         <p>Post announcements about court status and maintenance.</p>
-        <a href="{{ url_for('manage_announcements') }}" class="btn">Post Announcement</a>
+        <a href="{{ url_for('manage_announcements') }}" class="btn" style="margin-top: 1rem;">Post Announcement</a>
     </div>
 </div>
 
-<div class="card">
+<div class="card" style="margin-top: 2rem; width: 100%; margin-left: auto; margin-right: auto; padding: 1.5rem;">
     <h3 style="color: var(--apc-dark-blue);">Admin Privileges</h3>
     <ul>
         <li>Remove any scheduled bookings</li>
