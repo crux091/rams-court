@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Manage Announcements - APC Gymnasium Scheduler{% endblock %}
+{% block title %}Manage Announcements - Rams Court{% endblock %}
 
 {% block content %}
 <div class="card" style="max-width: 600px; margin: 2rem auto;">
@@ -28,16 +28,18 @@
                 <option value="available">Available</option>
                 <option value="maintenance">Under Maintenance</option>
                 <option value="closed">Temporarily Closed</option>
+                <option value="closed">School Event</option>
             </select>
         </div>
         
         <button type="submit" class="btn" style="width: 100%;">Post Announcement</button>
     </form>
     
-    <div style="margin-top: 2rem; padding: 1rem; background: var(--apc-light-gold); border-radius: 5px;">
-        <h4 style="color: var(--apc-dark-blue);">Announcement Guidelines:</h4>
-        <ul>
-            <li>Keep announcements clear and concise</li>
+    <div style="margin-top: 4rem; padding: 1rem; background: var(--apc-light-gold); border-radius: 5px; font-size: 13px;">
+        <h4 style="color: var(--apc-dark-blue); font-size: 14px; margin-bottom: 0.2cm;">Announcement Guidelines: </style></h4>
+       
+        <ul> 
+            <li>Keep announcements clear and concise </li>
             <li>Update court status accordingly</li>
             <li>Include relevant dates and times</li>
             <li>Notify about maintenance schedules in advance</li>
