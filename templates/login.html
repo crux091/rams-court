@@ -8,15 +8,24 @@
         Login to Rams Court
     </h2>
     
-    <form method="POST">
+    <form method="POST" action="{{ url_for('login') }}" style="padding: 1rem;">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-danger" role="alert">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
         <div class="form-group">
-            <label for="email">APC Email Address:</label>
+            <label for="email">Email Address</label>
             <input type="email" id="email" name="email" required 
                    placeholder="your.name@student.apc.edu.ph or your.name@admin.apc.edu.ph">
         </div>
         
         <div class="form-group">
-            <label for="password">Password:</label>
+            <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
         </div>
         

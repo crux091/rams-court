@@ -82,6 +82,8 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    print("Session before login:", dict(session))
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -347,5 +349,5 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    init_database()
+    # init_database()
     app.run(debug=True)
