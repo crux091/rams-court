@@ -37,7 +37,6 @@
                 <td>{{ schedule[1] }}</td>
                 <td>{{ schedule[3] }} - {{ schedule[4] }}</td>
                 <td>{{ schedule[5] }}</td>
-                <td>{{ schedule[6] }}</td>
                 {% if session.user_type == 'admin' %}
                 <td>
                     <a href="{{ url_for('remove_schedule', schedule_id=schedule[0]) }}" 
