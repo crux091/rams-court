@@ -1,8 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
-from datetime import datetime, time
-import re
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
@@ -123,7 +122,7 @@ def register():
         elif email.endswith('@student.apc.edu.ph'):
             user_type = 'student'
         else:
-            flash('Please use a valid APC email address')
+            flash('Invalid Email')
             return render_template('register.html')
         
         hashed_password = generate_password_hash(password)
