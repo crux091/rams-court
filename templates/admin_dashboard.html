@@ -4,8 +4,9 @@
 
 {% block content %}
 <h1 style="text-align: center; color: var(--apc-dark-blue); margin-bottom: 2rem;">
-    Admin Dashboard - {{ session.name }}
+    Welcome, {{ session.name|capitalize }}!
 </h1>
+
 
 <div class="dashboard-grid">
     <div class="dashboard-card">

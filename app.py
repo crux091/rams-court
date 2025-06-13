@@ -167,6 +167,7 @@ def student_dashboard():
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
+
     if 'user_id' not in session or session['user_type'] != 'admin':
         return redirect(url_for('login'))
     

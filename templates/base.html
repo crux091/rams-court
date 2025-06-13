@@ -234,23 +234,35 @@
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">APC Rams Court</div>
+<header class="header">
+    <div class="header-content">
+        <div class="logo">
             {% if session.user_id %}
-            <nav class="nav-links">
-                <a href="{{ url_for('check_availability') }}">Check Availability</a>
-                <a href="{{ url_for('add_schedule') }}">Add Schedule</a>
                 {% if session.user_type == 'admin' %}
-                <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+                    <a href="{{ url_for('admin_dashboard') }}" style="text-decoration: none; color: inherit;">APC Rams Court</a>
                 {% else %}
-                <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('student_dashboard') }}" style="text-decoration: none; color: inherit;">APC Rams Court</a>
                 {% endif %}
-                <a href="{{ url_for('logout') }}">Logout</a>
-            </nav>
+            {% else %}
+                APC Rams Court
             {% endif %}
         </div>
-    </header>
+        
+        {% if session.user_id %}
+        <nav class="nav-links">
+            <a href="{{ url_for('check_availability') }}">Check Availability</a>
+            <a href="{{ url_for('add_schedule') }}">Add Schedule</a>
+            {% if session.user_type == 'admin' %}
+            <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+            {% else %}
+            <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+        {% endif %}
+    </div>
+</header>
+
 
     <div class="container">
         {% with messages = get_flashed_messages() %}
