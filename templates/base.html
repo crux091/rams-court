@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Rams Court{% endblock %}</title>
+    <title>{% block title %}Rams Sched-It{% endblock %}</title>
     <style>
         :root {
             --apc-gold: #FFD700;
@@ -50,19 +50,71 @@
         .nav-links {
             display: flex;
             gap: 2rem;
+            position: relative;
         }
 
-        .nav-links a {
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--apc-dark-blue);
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 5px;
+        }
+
+        .dropdown-content::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 5px solid var(--apc-dark-blue);
+        }
+
+        .dropdown-content a {
+            color: var(--apc-white);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            white-space: nowrap;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--apc-gold);
+            color: var(--apc-dark-blue);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: var(--apc-gold);
+            color: var(--apc-dark-blue);
+        }
+
+        .dropbtn {
             color: var(--apc-white);
             text-decoration: none;
             padding: 0.5rem 1rem;
             border-radius: 5px;
             transition: background-color 0.3s;
-        }
-
-        .nav-links a:hover {
-            background-color: var(--apc-gold);
-            color: var(--apc-dark-blue);
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            min-width: 100px;
         }
 
         .container {
@@ -212,6 +264,25 @@
             font-weight: bold;
         }
 
+        .nav-links a {
+            color: var(--apc-white);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a.dashboard-link:hover,
+        .nav-links a.logout-link:hover {
+            background-color: var(--apc-white);
+            color: var(--apc-dark-blue);
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--apc-gold);
+            color: var(--apc-dark-blue);
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -241,7 +312,7 @@
                 {% if session.user_type == 'admin' %}
                     <a href="{{ url_for('admin_dashboard') }}" style="text-decoration: none; color: inherit;">APC Rams Court</a>
                 {% else %}
-                    <a href="{{ url_for('student_dashboard') }}" style="text-decoration: none; color: inherit;">APC Rams Court</a>
+                    <a href="{{ url_for('student_dashboard') }}" style="text-decoration: none; color: inherit;">RAMS Sched-IT</a>
                 {% endif %}
             {% else %}
                 APC Rams Court
@@ -250,14 +321,21 @@
         
         {% if session.user_id %}
         <nav class="nav-links">
-            <a href="{{ url_for('check_availability') }}">Check Availability</a>
-            <a href="{{ url_for('add_schedule') }}">Add Schedule</a>
-            {% if session.user_type == 'admin' %}
-            <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+            <!-- <div class="dropdown">
+                <a href="#" class="dropbtn">Book</a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('check_availability') }}">Court Availability</a>
+                    <a href="{{ url_for('add_schedule') }}">Book Court</a>
+                    <a href="{{ url_for('check_room_availability') }}">Room Availability</a>
+                    <a href="{{ url_for('add_room_schedule') }}">Book Room</a>
+                </div>
+            </div> -->
+            <!-- {% if session.user_type == 'admin' %}
+            <a href="{{ url_for('admin_dashboard') }}" class="dashboard-link">Dashboard</a>
             {% else %}
-            <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
-            {% endif %}
-            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('student_dashboard') }}" class="dashboard-link">Dashboard</a>
+            {% endif %} -->
+            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
         </nav>
         {% endif %}
     </div>

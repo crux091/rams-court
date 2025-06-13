@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Add Room Schedule - Rams Court{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 2rem auto;">
+    <h2 style="text-align: center; color: var(--apc-dark-blue); margin-bottom: 2rem;">
+        Book Room Schedule
+    </h2>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="student_name">Student Name:</label>
+            <input type="text" id="student_name" name="student_name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required min="{{ today }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="start_time">Start Time:</label>
+            <input type="time" id="start_time" name="start_time" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="end_time">End Time:</label>
+            <input type="time" id="end_time" name="end_time" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="room">Room:</label>
+            <select id="room" name="room" required>
+                <option value="">Select Room</option>
+                <option value="Room 101">Room 101</option>
+                <option value="Room 102">Room 102</option>
+                <option value="Room 103">Room 103</option>
+                <option value="Room 201">Room 201</option>
+                <option value="Room 202">Room 202</option>
+                <option value="Room 203">Room 203</option>
+                <option value="Conference Room">Conference Room</option>
+                <option value="Study Room 1">Study Room 1</option>
+                <option value="Study Room 2">Study Room 2</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="purpose">Purpose:</label>
+            <select id="purpose" name="purpose" required>
+                <option value="">Select Purpose</option>
+                <option value="Study Group">Study Group</option>
+                <option value="Meeting">Meeting</option>
+                <option value="Class Activity">Class Activity</option>
+                <option value="Club Activity">Club Activity</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn" style="width: 100%;">Book Room</button>
+    </form>
+    
+    <div style="margin-top: 2rem; padding: 1rem; background: var(--apc-light-gold); border-radius: 5px; font-size: 13px">
+        <h4 style="color: var(--apc-dark-blue); font-size: 14px; margin-bottom: 0.2cm;">Important Notes:</h4>
+        <ul>
+            <li>Rooms are available from 7:00 AM to 8:00 PM only</li>
+            <li>Maximum booking duration is 3 hours</li>
+            <li>Please check availability before booking</li>
+            <li>Bookings must be made at least 1 day in advance</li>
+            <li>Keep the room clean and organized after use</li>
+        </ul>
+    </div>
+</div>
+{% endblock %} 

@@ -42,7 +42,21 @@ def init_database():
             start_time TIME NOT NULL,
             end_time TIME NOT NULL,
             activity VARCHAR(255) NOT NULL,
-            # period ENUM('AM', 'PM') NOT NULL,
+            created_by VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # Create room_schedules table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS room_schedules (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            student_name VARCHAR(255) NOT NULL,
+            date DATE NOT NULL,
+            start_time TIME NOT NULL,
+            end_time TIME NOT NULL,
+            room VARCHAR(255) NOT NULL,
+            purpose VARCHAR(255) NOT NULL,
             created_by VARCHAR(255) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -70,6 +84,7 @@ def init_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+    
     
     conn.commit()
     cursor.close()
@@ -173,6 +188,15 @@ def admin_dashboard():
     
     return render_template('admin_dashboard.html')
 
+from datetime import datetime
+
+def format_time(time_obj):
+    """Convert time object or string (HH:MM:SS) to 'HH:MM AM/PM' format."""
+    if isinstance(time_obj, datetime):
+        return time_obj.strftime('%I:%M %p')
+    else:
+        return datetime.strptime(str(time_obj), '%H:%M:%S').strftime('%I:%M %p')
+
 @app.route('/check_availability')
 def check_availability():
     if 'user_id' not in session:
@@ -190,6 +214,18 @@ def check_availability():
     )
     schedules = cursor.fetchall()
     
+    # Format schedule times
+    formatted_schedules = []
+    for sched in schedules:
+        formatted_schedules.append((
+            sched[0],                     # id
+            sched[1],                     # student_name
+            sched[2],                     # date
+            format_time(sched[3]),        # formatted start_time
+            format_time(sched[4]),        # formatted end_time
+            sched[5]                      # activity
+        ))
+    
     # Get blocked times
     cursor.execute(
         'SELECT * FROM blocked_times WHERE date = %s ORDER BY start_time',
@@ -197,13 +233,25 @@ def check_availability():
     )
     blocked_times = cursor.fetchall()
     
+    # Format blocked times
+    formatted_blocked_times = []
+    for blocked in blocked_times:
+        formatted_blocked_times.append((
+            blocked[0],                  # id
+            blocked[1],                  # date
+            format_time(blocked[2]),     # formatted start_time
+            format_time(blocked[3]),     # formatted end_time
+            blocked[4]                   # reason
+        ))
+    
     cursor.close()
     conn.close()
     
     return render_template('availability.html', 
-                         schedules=schedules, 
-                         blocked_times=blocked_times,
-                         selected_date=selected_date)
+                           schedules=formatted_schedules, 
+                           blocked_times=formatted_blocked_times,
+                           selected_date=selected_date)
+
 
 from datetime import datetime
 from flask import flash, redirect, render_template, request, session, url_for
@@ -348,6 +396,126 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+@app.route('/add_room_schedule', methods=['GET', 'POST'])
+def add_room_schedule():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        student_name = request.form['student_name']
+        date = request.form['date']
+        start_time = request.form['start_time']
+        end_time = request.form['end_time']
+        room = request.form['room']
+        purpose = request.form['purpose']
+
+        # Validate time range (7:00 AM to 8:00 PM)
+        try:
+            start_dt = datetime.strptime(start_time, "%H:%M")
+            end_dt = datetime.strptime(end_time, "%H:%M")
+
+            if start_dt >= end_dt:
+                flash("Start time must be before end time")
+                return render_template('add_room_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
+
+            # Room hours
+            earliest = datetime.strptime("07:00", "%H:%M")
+            latest = datetime.strptime("20:00", "%H:%M")
+
+            if start_dt < earliest or end_dt > latest:
+                flash("Rooms are only available from 7:00 AM to 8:00 PM")
+                return render_template('add_room_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
+
+        except ValueError:
+            flash("Invalid time format")
+            return render_template('add_room_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
+
+        # Check for conflicts
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT * FROM room_schedules 
+            WHERE date = %s AND room = %s AND (
+                (start_time <= %s AND end_time > %s) OR
+                (start_time < %s AND end_time >= %s) OR
+                (start_time >= %s AND end_time <= %s)
+            )
+        ''', (date, room, start_time, start_time, end_time, end_time, start_time, end_time))
+
+        if cursor.fetchone():
+            flash('Room is already booked for this time slot')
+            cursor.close()
+            conn.close()
+            return render_template('add_room_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
+
+        cursor.execute('''
+            INSERT INTO room_schedules (student_name, date, start_time, end_time, room, purpose, created_by)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ''', (student_name, date, start_time, end_time, room, purpose, session['email']))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash('Room schedule added successfully!')
+        return redirect(url_for('check_room_availability'))
+
+    # For GET request, send today's date to set min date in input
+    return render_template('add_room_schedule.html', today=datetime.today().strftime('%Y-%m-%d'))
+
+@app.route('/check_room_availability')
+def check_room_availability():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    selected_date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Get existing room schedules
+    cursor.execute(
+        'SELECT * FROM room_schedules WHERE date = %s ORDER BY start_time',
+        (selected_date,)
+    )
+    schedules = cursor.fetchall()
+    
+    # Format schedule times
+    formatted_schedules = []
+    for sched in schedules:
+        formatted_schedules.append((
+            sched[0],                     # id
+            sched[1],                     # student_name
+            sched[2],                     # date
+            format_time(sched[3]),        # formatted start_time
+            format_time(sched[4]),        # formatted end_time
+            sched[5],                     # room
+            sched[6]                      # purpose
+        ))
+    
+    cursor.close()
+    conn.close()
+    
+    return render_template('room_availability.html', 
+                         schedules=formatted_schedules,
+                         selected_date=selected_date)
+
+@app.route('/remove_room_schedule/<int:schedule_id>')
+def remove_room_schedule(schedule_id):
+    if 'user_id' not in session or session['user_type'] != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM room_schedules WHERE id = %s', (schedule_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    flash('Room schedule removed successfully!')
+    return redirect(url_for('check_room_availability'))
+
 if __name__ == '__main__':
-    # init_database()
-    app.run(debug=True)
+    init_database()
+    app.run(host='192.168.0.13', debug=True, port=5001)
