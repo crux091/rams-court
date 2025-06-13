@@ -80,7 +80,7 @@ def init_database():
 def index():
     return render_template('login.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     print("Session before login:", dict(session))
 
@@ -151,7 +151,7 @@ def register():
     
     return render_template('register.html')
 
-@app.route('/student_dashboard')
+@app.route('/student/dashboard')
 def student_dashboard():
     if 'user_id' not in session or session['user_type'] != 'student':
         return redirect(url_for('login'))
@@ -166,7 +166,7 @@ def student_dashboard():
     
     return render_template('student_dashboard.html', announcement=announcement)
 
-@app.route('/admin_dashboard')
+@app.route('/admin/dashboard')
 def admin_dashboard():
     if 'user_id' not in session or session['user_type'] != 'admin':
         return redirect(url_for('login'))
