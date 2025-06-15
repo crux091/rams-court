@@ -326,12 +326,12 @@
         <div class="logo">
             {% if session.user_id %}
                 {% if session.user_type == 'admin' %}
-                    <a href="{{ url_for('admin_dashboard') }}" style="text-decoration: none; color: inherit;">APC Rams Court</a>
+                    <a href="{{ url_for('admin_dashboard') }}" style="text-decoration: none; color: inherit;">RAMS Sched-IT</a>
                 {% else %}
                     <a href="{{ url_for('student_dashboard') }}" style="text-decoration: none; color: inherit;">RAMS Sched-IT</a>
                 {% endif %}
             {% else %}
-                APC Rams Court
+                RAMS Sched-IT
             {% endif %}
         </div>
         
