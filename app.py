@@ -518,4 +518,4 @@ def remove_room_schedule(schedule_id):
 
 if __name__ == '__main__':
     init_database()
-    app.run(host='192.168.0.13', debug=True, port=5001)
+    app.run(debug=True, port=5001)
