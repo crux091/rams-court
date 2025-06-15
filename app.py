@@ -81,10 +81,22 @@ def init_database():
             title VARCHAR(255) NOT NULL,
             message TEXT NOT NULL,
             status ENUM('available', 'maintenance', 'closed') NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )
     ''')
     
+    # Ensure start_at column exists
+    try:
+        cursor.execute("ALTER TABLE announcements ADD COLUMN start_at DATETIME DEFAULT CURRENT_TIMESTAMP")
+    except Exception:
+        pass  # Ignore if already exists
+    
+    # Ensure end_at column exists
+    try:
+        cursor.execute("ALTER TABLE announcements ADD COLUMN end_at DATETIME")
+    except Exception:
+        pass  # Ignore if already exists
     
     conn.commit()
     cursor.close()
@@ -170,10 +182,10 @@ def student_dashboard():
     if 'user_id' not in session or session['user_type'] != 'student':
         return redirect(url_for('login'))
     
-    # Get announcements
+    # Get current valid announcement
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM announcements ORDER BY created_at DESC LIMIT 1')
+    cursor.execute('SELECT * FROM announcements WHERE start_at <= NOW() AND (end_at IS NULL OR end_at >= NOW()) ORDER BY created_at DESC LIMIT 1')
     announcement = cursor.fetchone()
     cursor.close()
     conn.close()
@@ -371,25 +383,86 @@ def manage_announcements():
     if 'user_id' not in session or session['user_type'] != 'admin':
         return redirect(url_for('login'))
     
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
     if request.method == 'POST':
         title = request.form['title']
         message = request.form['message']
         status = request.form['status']
+        start_at = request.form['start_at']
+        end_at = request.form['end_at']
         
-        conn = get_db_connection()
-        cursor = conn.cursor()
         cursor.execute('''
-            INSERT INTO announcements (title, message, status)
-            VALUES (%s, %s, %s)
-        ''', (title, message, status))
+            INSERT INTO announcements (title, message, status, start_at, end_at)
+            VALUES (%s, %s, %s, %s, %s)
+        ''', (title, message, status, start_at, end_at))
+        conn.commit()
+        
+        flash('Announcement posted successfully!')
+        return redirect(url_for('manage_announcements'))
+    
+    # Get all announcements for display
+    cursor.execute('SELECT * FROM announcements ORDER BY created_at DESC')
+    announcements = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    
+    return render_template('manage_announcements.html', announcements=announcements)
+
+@app.route('/edit_announcement/<int:announcement_id>', methods=['GET', 'POST'])
+def edit_announcement(announcement_id):
+    if 'user_id' not in session or session['user_type'] != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    if request.method == 'POST':
+        title = request.form['title']
+        message = request.form['message']
+        status = request.form['status']
+        start_at = request.form['start_at']
+        end_at = request.form['end_at']
+        
+        cursor.execute('''
+            UPDATE announcements 
+            SET title = %s, message = %s, status = %s, updated_at = CURRENT_TIMESTAMP, start_at = %s, end_at = %s
+            WHERE id = %s
+        ''', (title, message, status, start_at, end_at, announcement_id))
         conn.commit()
         cursor.close()
         conn.close()
         
-        flash('Announcement posted successfully!')
-        return redirect(url_for('admin_dashboard'))
+        flash('Announcement updated successfully!')
+        return redirect(url_for('manage_announcements'))
     
-    return render_template('manage_announcements.html')
+    # Get the announcement to edit
+    cursor.execute('SELECT * FROM announcements WHERE id = %s', (announcement_id,))
+    announcement = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    
+    if not announcement:
+        flash('Announcement not found!')
+        return redirect(url_for('manage_announcements'))
+    
+    return render_template('edit_announcement.html', announcement=announcement)
+
+@app.route('/delete_announcement/<int:announcement_id>')
+def delete_announcement(announcement_id):
+    if 'user_id' not in session or session['user_type'] != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM announcements WHERE id = %s', (announcement_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    flash('Announcement deleted successfully!')
+    return redirect(url_for('manage_announcements'))
 
 @app.route('/logout')
 def logout():

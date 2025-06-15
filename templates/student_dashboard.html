@@ -13,6 +13,12 @@
     <h3>{{ announcement[1] }}</h3>
     <p>{{ announcement[2] }}</p>
     <small>Court Status: {{ announcement[3]|title }}</small>
+    <br>
+    <small>Posted: {{ announcement[4].strftime('%B %d, %Y at %I:%M %p') }}</small>
+    {% if announcement[5] and announcement[5] != announcement[4] %}
+    <br>
+    <small>Last Updated: {{ announcement[5].strftime('%B %d, %Y at %I:%M %p') }}</small>
+    {% endif %}
 </div>
 {% endif %}
 
