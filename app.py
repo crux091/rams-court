@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__) 
 app.secret_key = 'your-secret-key-here'
 
 # Database configuration
