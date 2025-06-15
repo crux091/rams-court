@@ -8,11 +8,11 @@ app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
 
 DB_CONFIG = {
-    'host': os.getenv('DB_HOST'),
-    'port': int(os.getenv('DB_PORT', 3306)),  # Default to 3306 if missing
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
-    'database': os.getenv('DB_NAME')
+    'host': 'switchyard.proxy.rlwy.net',
+    'port': 34283,
+    'user': 'root',
+    'password': 'VAfqjaLChOciwsyETboZZrUBTiXpTKTq',
+    'database': 'railway'
 }
 
 def get_db_connection():
