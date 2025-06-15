@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Rams Sched-It{% endblock %}</title>
+    <title> 
+        {% block title %} "Rams Sched-It{% endblock %}
+    </title>
     <style>
         :root {
             --apc-gold: #FFD700;
@@ -45,6 +47,7 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: var(--apc-gold);
+            
         }
 
         .nav-links {
@@ -272,11 +275,24 @@
             transition: all 0.3s;
         }
 
+        .nav-links a.logout-link {
+            background-color:rgb(202, 154, 8); /* very dark navy like in the image */
+            color: white;
+            padding: 0.75rem 2rem;
+             border-radius: 999px; /* full pill shape */
+            font-weight: bold;
+             text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }   
+        
         .nav-links a.dashboard-link:hover,
         .nav-links a.logout-link:hover {
-            background-color: var(--apc-white);
-            color: var(--apc-dark-blue);
+        background-color: var(--apc-white);
+        color: var(--apc-dark-blue);
         }
+
 
         .dropdown-content a:hover {
             background-color: var(--apc-gold);
@@ -310,12 +326,12 @@
         <div class="logo">
             {% if session.user_id %}
                 {% if session.user_type == 'admin' %}
-                    <a href="{{ url_for('admin_dashboard') }}" style="text-decoration: none; color: inherit;">APC Rams Court</a>
+                    <a href="{{ url_for('admin_dashboard') }}" style="text-decoration: none; color: inherit;">RAMS Sched-IT</a>
                 {% else %}
                     <a href="{{ url_for('student_dashboard') }}" style="text-decoration: none; color: inherit;">RAMS Sched-IT</a>
                 {% endif %}
             {% else %}
-                APC Rams Court
+                RAMS Sched-IT
             {% endif %}
         </div>
         
@@ -335,7 +351,7 @@
             {% else %}
             <a href="{{ url_for('student_dashboard') }}" class="dashboard-link">Dashboard</a>
             {% endif %} -->
-            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+            <a href="{{ url_for('logout') }}" class="logout-link"><strong>LOGOUT</strong></a>
         </nav>
         {% endif %}
     </div>
