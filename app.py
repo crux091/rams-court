@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
+import os
 from datetime import datetime
 
 app = Flask(__name__) 
@@ -8,10 +9,11 @@ app.secret_key = 'your-secret-key-here'
 
 # Database configuration
 DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '123456',
-    'database': 'gymnasium_scheduler'
+    'host': os.getenv('DB_HOST'),
+    'port': int(os.getenv('DB_PORT')),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'database': os.getenv('DB_NAME')
 }
 
 def get_db_connection():
